@@ -1,7 +1,7 @@
 # [php-project-lvl4](https://task-manager-2022.herokuapp.com/)
 
 [![Action status](https://github.com/T-Grigory/php-project-lvl4/workflows/hexlet-check/badge.svg)](https://github.com/T-Grigory/php-project-lvl4/actions)
-[![Action CI](https://github.com/T-Grigory/php-project-lvl4/workflows/phpci/badge.svg)](https://github.com/T-Grigory/php-project-lvl4/actions)
+[![Action CI](https://github.com/T-Grigory/php-project-lvl4/actions/workflows/phpci.yml/badge.svg)](https://github.com/T-Grigory/php-project-lvl4/actions)
 [![Maintainability](https://api.codeclimate.com/v1/badges/306d35eaec0bcab085ab/maintainability)](https://codeclimate.com/github/T-Grigory/php-project-lvl4/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/306d35eaec0bcab085ab/test_coverage)](https://codeclimate.com/github/T-Grigory/php-project-lvl4/test_coverage)
 
