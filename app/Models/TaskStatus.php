@@ -12,9 +12,13 @@ class TaskStatus extends Model
 
     protected $fillable = ['name'];
 
-
     public function getCreatedAtAttribute($date)
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $date)->format('d.m.Y');
+    }
+
+    public function tasks()
+    {
+        return $this->hasMany(Task::class, 'status_id');
     }
 }

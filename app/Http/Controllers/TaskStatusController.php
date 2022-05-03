@@ -9,6 +9,7 @@ use App\Models\TaskStatus;
 
 class TaskStatusController extends Controller
 {
+    private const EMPTY_LIST_OF_TASK = 0;
     /**
      * Display a listing of the resource.
      *
@@ -54,7 +55,7 @@ class TaskStatusController extends Controller
         $taskStatus->fill($data);
         $taskStatus->save();
 
-        flash(__('flash.success.create'))->success();
+        flash(__('flash.success.create', ['entity' => 'статус', 'create' => 'создан']))->success();
 
         return redirect()->route('task_statuses.index');
     }
@@ -95,7 +96,7 @@ class TaskStatusController extends Controller
         $taskStatus->fill($data);
         $taskStatus->save();
 
-        flash(__('flash.success.change'))->success();
+        flash(__('flash.success.change', ['entity' => 'статус', 'change' => 'изменен']))->success();
 
         return redirect()->route('task_statuses.index');
     }
@@ -110,13 +111,21 @@ class TaskStatusController extends Controller
     {
         $taskStatus = TaskStatus::find($id);
 
+        if (!$taskStatus) {
+            return redirect()->route('task_statuses.index');
+        }
         $this->authorize('delete', $taskStatus);
 
-        if ($taskStatus) {
+        $messagePath = 'flash.error.delete';
+        $flashMethod = 'error';
+
+        if ($taskStatus->tasks->count() === self::EMPTY_LIST_OF_TASK) {
             $taskStatus->delete();
+            $messagePath = 'flash.success.delete';
+            $flashMethod = 'success';
         }
 
-        flash(__('flash.success.delete'))->success();
+        flash(__($messagePath, ['entity' => 'статус', 'delete' => 'удален']))->$flashMethod();
 
         return redirect()->route('task_statuses.index');
     }

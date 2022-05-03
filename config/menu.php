@@ -1,10 +1,10 @@
 <?php
 
 return [
-//    [
-//        'title' => 'Задачи',
-//        'route' => 'tasks.index'
-//    ],
+    [
+        'title' => 'Задачи',
+        'route' => 'tasks.index'
+    ],
     [
         'title' => 'Статусы',
         'route' => 'task_statuses.index'

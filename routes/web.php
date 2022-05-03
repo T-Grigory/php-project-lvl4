@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TaskStatusController;
+use App\Http\Controllers\TaskController;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +20,7 @@ Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('ho
 
 Auth::routes();
 
-Route::resource('/task_statuses', \App\Http\Controllers\TaskStatusController::class)->except(['show']);
+Route::resources([
+    'task_statuses' => TaskStatusController::class,
+    'tasks' => TaskController::class
+]);

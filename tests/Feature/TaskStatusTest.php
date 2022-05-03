@@ -48,7 +48,6 @@ class TaskStatusTest extends TestCase
              ->post(route('task_statuses.store', $data))
              ->assertRedirect(route('task_statuses.index'))
              ->assertSessionHasNoErrors();
-
         $this->assertDatabaseHas('task_statuses', $data);
     }
 
@@ -111,7 +110,7 @@ class TaskStatusTest extends TestCase
     public function testUpdate()
     {
         $taskStatus = TaskStatus::factory()->create();
-        $data = $taskStatus::factory()->make()->only('name');
+        $data = TaskStatus::factory()->make()->only('name');
 
         $this->actingAs($this->user)
              ->patch(route('task_statuses.update', $taskStatus), $data)
