@@ -65,7 +65,7 @@
                     <td><a  class="text-decoration-none" href="{{route('tasks.show', $task)}}">{{$task->name}}</a></td>
                     <td>{{$task->createdBy->name}}</td>
                     <td>{{$task->assignedTo->name ?? ''}}</td>
-                    <td>{{$task->created_at}}</td>
+                    <td>{{$task->created_at->format('d.m.Y')}}</td>
 
                     <td>
                         @can('delete', $task)

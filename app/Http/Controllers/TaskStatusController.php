@@ -17,7 +17,7 @@ class TaskStatusController extends Controller
      */
     public function index()
     {
-         $taskStatuses = TaskStatus::orderBy('id')->get();
+        $taskStatuses = TaskStatus::orderBy('id')->paginate(15);
 
         return view('task_status.index', compact('taskStatuses'));
     }
@@ -66,9 +66,9 @@ class TaskStatusController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function edit(TaskStatus $taskStatus)
     {
-        $taskStatus = TaskStatus::findOrFail($id);
+        //$taskStatus = TaskStatus::findOrFail($id);
 
         $this->authorize('update', $taskStatus);
 
@@ -82,10 +82,10 @@ class TaskStatusController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, TaskStatus $taskStatus)
     {
 
-        $taskStatus = TaskStatus::findOrFail($id);
+        //$taskStatus = TaskStatus::findOrFail($id);
 
         $this->authorize('update', $taskStatus);
 

@@ -5,4 +5,14 @@
     <p>Имя: {{$task->name}}</p>
     <p>Статус: {{$task->status->name}}</p>
     <p>Описание: {{$task->description}}</p>
+    @if ($task->labels->count() > 0)
+        <p>Метки:</p>
+        <ul>
+            @foreach($task->labels as $label)
+                <li>{{$label->name}}</li>
+            @endforeach
+        </ul>
+    @endif
+
+
 @endsection

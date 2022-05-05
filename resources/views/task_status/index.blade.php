@@ -21,7 +21,7 @@
                 <tr>
                     <td>{{$status->id}}</td>
                     <td>{{$status->name}}</td>
-                    <td>{{$status->created_at}}</td>
+                    <td>{{$status->created_at->format('d.m.Y')}}</td>
                     <td>
                         @can('delete', $status)
                             <a href="{{route('task_statuses.destroy', $status)}}"  rel="nofollow" data-confirm="Вы уверены?" data-method="delete" class="text-danger text-decoration-none">
@@ -38,4 +38,5 @@
             @endforeach
         </tbody>
     </table>
+    {{$taskStatuses->links()}}
 @endsection

@@ -9,8 +9,8 @@ return [
         'title' => 'Статусы',
         'route' => 'task_statuses.index'
     ],
-//    [
-//        'title' => 'Метки',
-//        'route' => 'task_labels.index'
-//    ],
+    [
+        'title' => 'Метки',
+        'route' => 'labels.index'
+    ],
 ];

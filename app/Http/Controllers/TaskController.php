@@ -2,11 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Label;
+use App\Models\LabelTask;
 use App\Models\Task;
 use App\Models\TaskStatus;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class TaskController extends Controller
 {
@@ -34,8 +38,9 @@ class TaskController extends Controller
         $task = new Task();
         $users = User::all();
         $statuses = TaskStatus::all();
+        $labels = Label::all();
 
-        return view('task.create', compact('task', 'users', 'statuses'));
+        return view('task.create', compact('task', 'users', 'statuses', 'labels'));
     }
 
     /**
@@ -53,13 +58,17 @@ class TaskController extends Controller
             'description' => 'nullable',
             'status_id' => 'required',
             'assigned_to_id' => 'nullable',
+            'labels' => 'array',
         ]);
+        $labels = Arr::whereNotNull($data['labels'] ?? []);
 
         $task = new Task();
 
         $task->fill($data);
         $task->created_by_id = Auth::id();
         $task->save();
+
+        $task->labels()->attach($labels);
 
         flash(__('flash.success.create', ['entity' => 'Задача', 'create' => 'создана']))->success();
 
@@ -91,8 +100,9 @@ class TaskController extends Controller
 
         $users = User::all();
         $statuses = TaskStatus::all();
+        $labels = Label::all();
 
-        return view('task.edit', compact('task', 'users', 'statuses'));
+        return view('task.edit', compact('task', 'users', 'statuses', 'labels'));
     }
 
     /**
@@ -112,11 +122,16 @@ class TaskController extends Controller
             'description' => 'nullable',
             'status_id' => 'required',
             'assigned_to_id' => 'nullable',
+            'labels' => 'array',
         ]);
+
+        $labels = Arr::whereNotNull($data['labels'] ?? []);
 
         $task->fill($data);
         $task->created_by_id = Auth::id();
         $task->save();
+
+        $task->labels()->sync($labels);
 
         flash(__('flash.success.change', ['entity' => 'Задача', 'change' => 'изменена']))->success();
 
@@ -138,6 +153,8 @@ class TaskController extends Controller
         }
 
         $this->authorize('delete', $task);
+
+        $task->labels()->detach();
 
         $task->delete();
 

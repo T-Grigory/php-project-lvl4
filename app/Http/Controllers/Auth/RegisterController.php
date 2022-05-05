@@ -72,7 +72,7 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        Mail::to($user)->send(new UserRegistration($user));
+        //Mail::to($user)->send(new UserRegistration($user));
 
         return $user;
     }

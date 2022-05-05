@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Models\Task;
-use App\Models\TaskStatus;
 use App\Models\User;
 use Database\Seeders\TaskStatusSeeder;
 use Database\Seeders\UserSeeder;

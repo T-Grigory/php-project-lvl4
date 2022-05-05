@@ -46,3 +46,12 @@
         </span>
     @enderror
 </div>
+<div class="form-group mb-3">
+    <label for="labels">Метки</label>
+    <select class="form-control" multiple="" name="labels[]">
+        <option value=""></option>
+        @foreach($labels as $label)
+            <option value="{{$label->id}}" @if($task->labels->contains($label)) selected @endif>{{$label->name}}</option>
+        @endforeach
+    </select>
+</div>

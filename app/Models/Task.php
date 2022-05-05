@@ -12,11 +12,6 @@ class Task extends Model
 
     protected $fillable = ['name', 'description', 'status_id', 'assigned_to_id'];
 
-    public function getCreatedAtAttribute($date)
-    {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $date)->format('d.m.Y');
-    }
-
     public function createdBy()
     {
         return $this->belongsTo(User::class);
@@ -30,5 +25,10 @@ class Task extends Model
     public function status()
     {
         return $this->belongsTo(TaskStatus::class);
+    }
+
+    public function labels()
+    {
+        return $this->belongsToMany(Label::class);
     }
 }

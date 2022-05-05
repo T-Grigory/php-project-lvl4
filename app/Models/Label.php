@@ -6,14 +6,16 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TaskStatus extends Model
+class Label extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+      'name', 'description'
+    ];
 
     public function tasks()
     {
-        return $this->hasMany(Task::class, 'status_id');
+        return $this->belongsToMany(Task::class);
     }
 }
