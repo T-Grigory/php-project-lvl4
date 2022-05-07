@@ -44,7 +44,7 @@ class LabelTest extends TestCase
 
     public function testStore()
     {
-        $data = Label::factory()->make()->attributesToArray();
+        $data = Label::factory()->make()->toArray();
 
         $this->actingAs($this->user)
              ->post(route('labels.store', $data))
@@ -56,7 +56,7 @@ class LabelTest extends TestCase
 
     public function testStoreUnauthorizedUser()
     {
-        $data = Label::factory()->make()->attributesToArray();
+        $data = Label::factory()->make()->toArray();
 
         $this->post(route('labels.store', $data))
             ->assertSee('This action is unauthorized.')
@@ -113,7 +113,7 @@ class LabelTest extends TestCase
     public function testUpdate()
     {
         $label = Label::factory()->create();
-        $data = Label::factory()->make()->attributesToArray();
+        $data = Label::factory()->make()->toArray();
 
         $this->actingAs($this->user)
              ->patch(route('labels.update', $label), $data)
@@ -125,10 +125,10 @@ class LabelTest extends TestCase
 
     public function testUpdateUnauthorizedUser()
     {
-        $taskStatus = Label::factory()->create();
-        $data = $taskStatus::factory()->make()->attributesToArray();
+        $label = Label::factory()->create();
+        $data = Label::factory()->make()->toArray();
 
-        $this->patch(route('labels.update', $taskStatus), $data)
+        $this->patch(route('labels.update', $label), $data)
              ->assertSee('This action is unauthorized.')
              ->assertStatus(403);
 
@@ -175,7 +175,7 @@ class LabelTest extends TestCase
              ->assertRedirect(route('labels.index'))
              ->assertSessionHasNoErrors();
 
-        $this->assertDatabaseMissing('labels', $label->only('id'));
+        $this->assertDatabaseMissing('labels', ['id' => $label->getAttribute('id')]);
     }
 
     public function testDestroyUnauthorizedUser()
@@ -186,6 +186,6 @@ class LabelTest extends TestCase
              ->assertSee('This action is unauthorized.')
              ->assertStatus(403);
 
-        $this->assertDatabaseHas('labels', ['id' => $label->id]);
+        $this->assertDatabaseHas('labels', ['id' => $label->getAttribute('id')]);
     }
 }

@@ -68,8 +68,9 @@ class TaskController extends Controller
         ]);
         $labels = Arr::whereNotNull($data['labels'] ?? []);
 
-        $task = new Task(['created_by_id' => Auth::id()]);
+        $task = new Task();
         $task->fill($data);
+        $task->created_by_id = Auth::id();
         $task->save();
 
         $task->labels()->attach($labels);
