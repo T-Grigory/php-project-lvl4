@@ -19,7 +19,7 @@ class UserRegistration extends Mailable
      * @return void
      */
 
-    protected $user;
+    protected User $user;
 
     public function __construct(User $user)
     {
