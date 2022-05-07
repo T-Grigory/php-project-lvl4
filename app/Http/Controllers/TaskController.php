@@ -124,11 +124,11 @@ class TaskController extends Controller
         return redirect()->route('tasks.index');
     }
 
-    public function destroy($id): RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
         $task = Task::find($id);
 
-        if (!$task) {
+        if (is_null($task)) {
             return redirect()->route('tasks.index');
         }
 

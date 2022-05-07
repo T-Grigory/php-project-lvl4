@@ -45,12 +45,6 @@ class LabelController extends Controller
         return redirect()->route('labels.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Label $label
-     * @return \Illuminate\Http\Response
-     */
     public function edit(Label $label): View
     {
         $this->authorize('update', $label);
@@ -75,11 +69,11 @@ class LabelController extends Controller
         return redirect()->route('labels.index');
     }
 
-    public function destroy($id): RedirectResponse
+    public function destroy(int $id): RedirectResponse
     {
         $label = Label::find($id);
 
-        if (!$label) {
+        if (is_null($label)) {
             return redirect()->route('labels.index');
         }
 
