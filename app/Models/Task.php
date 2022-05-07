@@ -42,7 +42,7 @@ class Task extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'description', 'status_id', 'assigned_to_id'];
+    protected $fillable = ['name', 'description', 'status_id', 'assigned_to_id', 'created_by_id'];
 
     public function createdBy(): BelongsTo
     {
