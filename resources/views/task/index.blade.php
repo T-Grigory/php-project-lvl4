@@ -4,27 +4,30 @@
     <h1 class="mb-5">Задачи</h1>
     <div class="d-flex mb-3">
         <div>
-            <form method="GET" action="https://php-task-manager-ru.hexlet.app/tasks" accept-charset="UTF-8">
+            <form method="GET" action="{{route('tasks.index')}}" accept-charset="UTF-8">
                 <div class="row g-1">
                     <div class="col">
                         <select class="form-select me-2" name="filter[status_id]">
-                            <option selected="selected" value="">Статус</option>
-                            @foreach($tasks as $task)
-                                <option value="{{$task->status->id}}">{{$task->status->name}}</option>
+                            <option value="">Статус</option>
+                            @foreach($statuses as $status)
+                                <option @selected($status->id == $statusID) value="{{$status->id}}">{{$status->name}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col">
                         <select class="form-select me-2" name="filter[created_by_id]">
                             <option selected="selected" value="">Автор</option>
-                            @foreach($tasks as $task)
-                                <option value="{{$task->createdBy->id}}">{{$task->createdBy->name}}</option>
+                            @foreach($users as $author)
+                                <option @selected($createdByID == $author->id) value="{{$author->id}}">{{$author->name}}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col">
                         <select class="form-select me-2" name="filter[assigned_to_id]">
                             <option selected="selected" value="">Исполнитель</option>
+                            @foreach($users as $performer)
+                                <option @selected($assignedToID == $performer->id) value="{{$performer->id}}">{{$performer->name}}</option>
+                            @endforeach
                         </select>
                     </div>
                     <div class="col">
@@ -68,16 +71,16 @@
                     <td>{{$task->created_at->format('d.m.Y')}}</td>
 
                     <td>
-                        @can('delete', $task)
-                            <a class="text-danger text-decoration-none justify-content-start" href="{{route('tasks.destroy', $task)}}" data-confirm="Вы уверены?" data-method="delete">Удалить</a>
-                        @endcan
                         @can('update', $task)
-                            <a class="text-decoration-none justify-content-end" href="{{route('tasks.edit', $task)}}">Изменить</a>
+                            <a class="text-decoration-none" href="{{route('tasks.edit', $task)}}">Изменить</a>
+                        @endcan
+                        @can('delete', $task)
+                            <a class="text-danger text-decoration-none" href="{{route('tasks.destroy', $task)}}" data-confirm="Вы уверены?" data-method="delete">Удалить</a>
                         @endcan
                     </td>
                 </tr>
             @endforeach
         </tbody>
     </table>
-    {{$tasks->links()}}
+   {{$tasks->links()}}
 @endsection

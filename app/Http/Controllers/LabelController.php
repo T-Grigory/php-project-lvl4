@@ -4,43 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Label;
 use Illuminate\Http\Request;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class LabelController extends Controller
 {
     private const EMPTY_LIST_OF_LABEL = 0;
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): View
     {
         $labels = Label::Orderby('id')->paginate(15);
 
         return view('label.index', compact('labels'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function create(): View
     {
         $this->authorize('create', Label::class);
 
         $label = new Label();
+
         return view('label.create', compact('label'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', Label::class);
 
@@ -53,7 +40,7 @@ class LabelController extends Controller
         $label->fill($data);
         $label->save();
 
-        flash(__('flash.success.create', ['entity' => 'Метка', 'create' => 'создана']))->success();
+        flash(__('flash.success.feminine.create', ['entity' => 'метка']))->success();
 
         return redirect()->route('labels.index');
     }
@@ -64,21 +51,14 @@ class LabelController extends Controller
      * @param \App\Models\Label $label
      * @return \Illuminate\Http\Response
      */
-    public function edit(Label $label)
+    public function edit(Label $label): View
     {
         $this->authorize('update', $label);
 
         return view('label.edit', compact('label'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Label $label
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Label $label)
+    public function update(Request $request, Label $label): RedirectResponse
     {
         $this->authorize('update', $label);
 
@@ -90,18 +70,12 @@ class LabelController extends Controller
         $label->fill($data);
         $label->save();
 
-        flash(__('flash.success.change', ['entity' => 'Метка', 'change' => 'изменена']))->success();
+        flash(__('flash.success.feminine.change', ['entity' => 'метка']))->success();
 
         return redirect()->route('labels.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param \App\Models\Label $label
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $label = Label::find($id);
 
@@ -111,18 +85,12 @@ class LabelController extends Controller
 
         $this->authorize('delete', $label);
 
-        $messagePath = 'flash.error.delete';
-        $flashMethod = 'error';
-        $entity = 'метку';
-
         if ($label->tasks->count() === self::EMPTY_LIST_OF_LABEL) {
             $label->delete();
-            $messagePath = 'flash.success.delete';
-            $flashMethod = 'success';
-            $entity = 'метка';
+            flash(__('flash.success.feminine.delete', ['entity' => 'метка']))->success();
+        } else {
+            flash(__('flash.error.delete', ['entity' => 'метку']))->error();
         }
-
-        flash(__($messagePath, ['entity' => $entity, 'delete' => 'удалена']))->$flashMethod();
 
         return redirect()->route('labels.index');
     }

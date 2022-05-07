@@ -3,35 +3,47 @@
 namespace App\Http\Controllers;
 
 use App\Models\Label;
-use App\Models\LabelTask;
 use App\Models\Task;
 use App\Models\TaskStatus;
 use App\Models\User;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
+use Spatie\QueryBuilder\AllowedFilter;
+use Spatie\QueryBuilder\QueryBuilder;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
+    public function index(): View
     {
-        $tasks = Task::Orderby('id')->paginate(15);
 
-        return view('task.index', compact('tasks'));
+        $tasks = QueryBuilder::for(Task::class)
+            ->allowedFilters([
+                AllowedFilter::exact('status_id'),
+                AllowedFilter::exact('created_by_id'),
+                AllowedFilter::exact('assigned_to_id')
+            ])
+            ->orderBy('id')
+            ->paginate(15);
+
+
+        $users = User::all();
+        $statuses = TaskStatus::all();
+
+        $query = request()->query->all();
+
+        $filter = [
+            'statusID' => $query['filter']['status_id'] ?? null,
+            'createdByID' => $query['filter']['created_by_id'] ??  null,
+            'assignedToID' => $query['filter']['assigned_to_id'] ??  null,
+        ];
+
+        return view('task.index', compact('tasks', 'users', 'statuses'), $filter);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
+    public function create(): View
     {
         $this->authorize('create', TaskStatus::class);
 
@@ -43,13 +55,7 @@ class TaskController extends Controller
         return view('task.create', compact('task', 'users', 'statuses', 'labels'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', TaskStatus::class);
 
@@ -70,31 +76,19 @@ class TaskController extends Controller
 
         $task->labels()->attach($labels);
 
-        flash(__('flash.success.create', ['entity' => 'Задача', 'create' => 'создана']))->success();
+        flash(__('flash.success.feminine.create', ['entity' => 'задача']))->success();
 
         return redirect()->route('tasks.index');
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Task $task)
+    public function show(Task $task): View
     {
         $this->authorize('view', $task);
 
         return view('task.show', compact('task'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Task $task)
+    public function edit(Task $task): View
     {
         $this->authorize('update', $task);
 
@@ -105,14 +99,7 @@ class TaskController extends Controller
         return view('task.edit', compact('task', 'users', 'statuses', 'labels'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Task $task)
+    public function update(Request $request, Task $task): RedirectResponse
     {
 
         $this->authorize('update', $task);
@@ -128,23 +115,16 @@ class TaskController extends Controller
         $labels = Arr::whereNotNull($data['labels'] ?? []);
 
         $task->fill($data);
-        $task->created_by_id = Auth::id();
         $task->save();
 
         $task->labels()->sync($labels);
 
-        flash(__('flash.success.change', ['entity' => 'Задача', 'change' => 'изменена']))->success();
+        flash(__('flash.success.feminine.change', ['entity' => 'задача']))->success();
 
         return redirect()->route('tasks.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Task  $task
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $task = Task::find($id);
 
@@ -158,7 +138,7 @@ class TaskController extends Controller
 
         $task->delete();
 
-        flash(__('flash.success.delete', ['entity' => 'Задача', 'delete' => 'удалена']))->success();
+        flash(__('flash.success.feminine.delete', ['entity' => 'задача']))->success();
 
         return redirect()->route('tasks.index');
     }

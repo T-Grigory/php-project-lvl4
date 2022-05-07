@@ -2,32 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use App\Models\TaskStatus;
+use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 
 class TaskStatusController extends Controller
 {
     private const EMPTY_LIST_OF_TASK = 0;
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
-    public function index()
+
+    public function index(): View
     {
         $taskStatuses = TaskStatus::orderBy('id')->paginate(15);
 
         return view('task_status.index', compact('taskStatuses'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\View\Factory|\Illuminate\Contracts\View\View
-     */
-    public function create()
+    public function create(): View
     {
         $this->authorize('create', TaskStatus::class);
 
@@ -36,13 +27,7 @@ class TaskStatusController extends Controller
         return view('task_status.create', compact('taskStatus'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\RedirectResponse
-     */
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $this->authorize('create', TaskStatus::class);
 
@@ -55,37 +40,21 @@ class TaskStatusController extends Controller
         $taskStatus->fill($data);
         $taskStatus->save();
 
-        flash(__('flash.success.create', ['entity' => 'статус', 'create' => 'создан']))->success();
+        flash(__('flash.success.masculine.create', ['entity' => 'статус']))->success();
 
         return redirect()->route('task_statuses.index');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(TaskStatus $taskStatus)
+    public function edit(TaskStatus $taskStatus): View
     {
-        //$taskStatus = TaskStatus::findOrFail($id);
-
         $this->authorize('update', $taskStatus);
 
         return view('task_status.edit', compact('taskStatus'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, TaskStatus $taskStatus)
-    {
 
-        //$taskStatus = TaskStatus::findOrFail($id);
+    public function update(Request $request, TaskStatus $taskStatus): RedirectResponse
+    {
 
         $this->authorize('update', $taskStatus);
 
@@ -96,18 +65,12 @@ class TaskStatusController extends Controller
         $taskStatus->fill($data);
         $taskStatus->save();
 
-        flash(__('flash.success.change', ['entity' => 'статус', 'change' => 'изменен']))->success();
+        flash(__('flash.success.masculine.change', ['entity' => 'статус']))->success();
 
         return redirect()->route('task_statuses.index');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    public function destroy($id): RedirectResponse
     {
         $taskStatus = TaskStatus::find($id);
 
@@ -116,16 +79,12 @@ class TaskStatusController extends Controller
         }
         $this->authorize('delete', $taskStatus);
 
-        $messagePath = 'flash.error.delete';
-        $flashMethod = 'error';
-
         if ($taskStatus->tasks->count() === self::EMPTY_LIST_OF_TASK) {
             $taskStatus->delete();
-            $messagePath = 'flash.success.delete';
-            $flashMethod = 'success';
+            flash(__('flash.success.masculine.delete', ['entity' => 'статус']))->success();
+        } else {
+            flash(__('flash.error.delete', ['entity' => 'статус']))->error();
         }
-
-        flash(__($messagePath, ['entity' => 'статус', 'delete' => 'удален']))->$flashMethod();
 
         return redirect()->route('task_statuses.index');
     }
