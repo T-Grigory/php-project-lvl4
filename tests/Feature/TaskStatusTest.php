@@ -42,7 +42,7 @@ class TaskStatusTest extends TestCase
     }
     public function testStore()
     {
-        $data = TaskStatus::factory()->make()->only('name');
+        $data = TaskStatus::factory()->make()->toArray();
 
         $this->actingAs($this->user)
              ->post(route('task_statuses.store', $data))
@@ -53,7 +53,7 @@ class TaskStatusTest extends TestCase
 
     public function testStoreUnauthorizedUser()
     {
-        $data = TaskStatus::factory()->make()->only('name');
+        $data = TaskStatus::factory()->make()->toArray();
 
         $this->post(route('task_statuses.store', $data))
              ->assertSee('This action is unauthorized.')
@@ -110,7 +110,7 @@ class TaskStatusTest extends TestCase
     public function testUpdate()
     {
         $taskStatus = TaskStatus::factory()->create();
-        $data = TaskStatus::factory()->make()->only('name');
+        $data = TaskStatus::factory()->make()->toArray();
 
         $this->actingAs($this->user)
              ->patch(route('task_statuses.update', $taskStatus), $data)
@@ -123,7 +123,7 @@ class TaskStatusTest extends TestCase
     public function testUpdateUnauthorizedUser()
     {
         $taskStatus = TaskStatus::factory()->create();
-        $data = $taskStatus::factory()->make()->only('name');
+        $data = TaskStatus::factory()->make()->toArray();
 
         $this->patch(route('task_statuses.update', $taskStatus), $data)
              ->assertSee('This action is unauthorized.')
@@ -172,7 +172,7 @@ class TaskStatusTest extends TestCase
              ->assertRedirect(route('task_statuses.index'))
              ->assertSessionHasNoErrors();
 
-        $this->assertDatabaseMissing('task_statuses', $taskStatus->only('id'));
+        $this->assertDatabaseMissing('task_statuses', ['id' => $taskStatus->only('id')]);
     }
 
     public function testDestroyUnauthorizedUser()
@@ -183,6 +183,6 @@ class TaskStatusTest extends TestCase
              ->assertSee('This action is unauthorized.')
              ->assertStatus(403);
 
-        $this->assertDatabaseHas('task_statuses', ['id' => $taskStatus->id]);
+        $this->assertDatabaseHas('task_statuses', ['id' => $taskStatus->only('id')]);
     }
 }
