@@ -8,6 +8,7 @@ use App\Providers\RouteServiceProvider;
 use App\Models\User;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Validator;
 
@@ -72,7 +73,11 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
 
-        Mail::to($user)->send(new UserRegistration($user));
+        try {
+            Mail::to($user)->send(new UserRegistration($user));
+        } catch (\Exception $exception) {
+            Log::error($exception);
+        }
 
         return $user;
     }
