@@ -175,7 +175,7 @@ class LabelTest extends TestCase
              ->assertRedirect(route('labels.index'))
              ->assertSessionHasNoErrors();
 
-        $this->assertDatabaseMissing('labels', ['id' => $label->getAttributeValue('id')]);
+        $this->assertDatabaseMissing('labels', ['id' => $label->only('id')]);
     }
 
     public function testDestroyUnauthorizedUser()
@@ -186,6 +186,6 @@ class LabelTest extends TestCase
              ->assertSee('This action is unauthorized.')
              ->assertStatus(403);
 
-        $this->assertDatabaseHas('labels', ['id' => $label->getAttributeValue('id')]);
+        $this->assertDatabaseHas('labels', ['id' => $label->only('id')]);
     }
 }
