@@ -30,16 +30,9 @@ class TaskStatusTest extends TestCase
     {
         $this->actingAs($this->user)
              ->get(route('task_statuses.create'))
-             ->assertSee('Создать статус')
              ->assertStatus(200);
     }
 
-    public function testCreateUnauthorizedUser()
-    {
-        $this->get(route('task_statuses.create'))
-             ->assertSee('This action is unauthorized.')
-             ->assertStatus(403);
-    }
     public function testStore()
     {
         $data = TaskStatus::factory()->make()->toArray();
@@ -51,60 +44,13 @@ class TaskStatusTest extends TestCase
         $this->assertDatabaseHas('task_statuses', $data);
     }
 
-    public function testStoreUnauthorizedUser()
-    {
-        $data = TaskStatus::factory()->make()->toArray();
-
-        $this->post(route('task_statuses.store', $data))
-             ->assertSee('This action is unauthorized.')
-             ->assertStatus(403);
-
-        $this->assertDatabaseMissing('task_statuses', $data);
-    }
-
-    public function testStoreEmptyData()
-    {
-        $data = ['name' => ''];
-
-        $this->actingAs($this->user)
-             ->post(route('task_statuses.store', $data))
-             ->assertSessionHasErrors([
-                 'name' => 'Это обязательное поле'
-             ]);
-
-        $this->assertDatabaseMissing('task_statuses', $data);
-    }
-
-    public function testStoreUniqueFieldName()
-    {
-        $data = ['name' => 'новый'];
-        TaskStatus::factory()->create($data);
-
-        $this->actingAs($this->user)
-             ->from('task_statuses/create')
-             ->post(route('task_statuses.store', $data))
-             ->assertStatus(302)
-             ->assertSessionHasErrors(['name' => ':Entity с таким именем уже существует'])
-             ->assertRedirect(route('task_statuses.create'));
-    }
-
     public function testEdit()
     {
         $taskStatus = TaskStatus::factory()->create();
 
         $this->actingAs($this->user)
              ->get(route('task_statuses.edit', $taskStatus))
-             ->assertSee('Изменение статуса')
              ->assertStatus(200);
-    }
-
-    public function testEditUnauthorizedUser()
-    {
-        $taskStatus = TaskStatus::factory()->create();
-
-        $this->get(route('task_statuses.edit', $taskStatus))
-             ->assertSee('This action is unauthorized.')
-             ->assertStatus(403);
     }
 
     public function testUpdate()
@@ -120,49 +66,6 @@ class TaskStatusTest extends TestCase
         $this->assertDatabaseHas('task_statuses', $data);
     }
 
-    public function testUpdateUnauthorizedUser()
-    {
-        $taskStatus = TaskStatus::factory()->create();
-        $data = TaskStatus::factory()->make()->toArray();
-
-        $this->patch(route('task_statuses.update', $taskStatus), $data)
-             ->assertSee('This action is unauthorized.')
-             ->assertStatus(403);
-
-        $this->assertDatabaseMissing('task_statuses', $data);
-    }
-
-    public function testUpdateEmptyData()
-    {
-        $taskStatus = TaskStatus::factory()->create();
-        $data = ['name' => ''];
-
-        $this->actingAs($this->user)
-             ->from(route('task_statuses.edit', $taskStatus))
-             ->patch(route('task_statuses.update', $taskStatus), $data)
-             ->assertStatus(302)
-             ->assertSessionHasErrors([
-                'name' => 'Это обязательное поле'
-             ])
-             ->assertRedirect(route('task_statuses.edit', $taskStatus));
-    }
-
-    public function testUpdateOnUniqueFieldName()
-    {
-        $data = ['name' => 'новый'];
-        TaskStatus::factory()->create($data);
-        $taskStatus = TaskStatus::factory()->create();
-
-        $this->actingAs($this->user)
-             ->from(route('task_statuses.edit', $taskStatus))
-             ->patch(route('task_statuses.update', $taskStatus), $data)
-             ->assertStatus(302)
-             ->assertSessionHasErrors([
-                'name' => ':Entity с таким именем уже существует'
-             ])
-             ->assertRedirect(route('task_statuses.edit', $taskStatus));
-    }
-
     public function testDestroy()
     {
         $taskStatus = TaskStatus::factory()->create();
@@ -173,16 +76,5 @@ class TaskStatusTest extends TestCase
              ->assertSessionHasNoErrors();
 
         $this->assertDatabaseMissing('task_statuses', ['id' => $taskStatus->only('id')]);
-    }
-
-    public function testDestroyUnauthorizedUser()
-    {
-        $taskStatus = TaskStatus::factory()->create();
-
-        $this->delete(route('task_statuses.destroy', $taskStatus))
-             ->assertSee('This action is unauthorized.')
-             ->assertStatus(403);
-
-        $this->assertDatabaseHas('task_statuses', ['id' => $taskStatus->only('id')]);
     }
 }
