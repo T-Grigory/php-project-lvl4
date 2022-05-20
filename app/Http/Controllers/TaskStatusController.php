@@ -80,10 +80,10 @@ class TaskStatusController extends Controller
         if (!$taskStatus->tasks()->exists()) {
             $taskStatus->delete();
             flash(__('flash.success.masculine.delete', ['entity' => 'статус']))->success();
-            return redirect()->route('home.index');
+        } else {
+            flash(__('flash.error.delete', ['entity' => 'статус']))->error();
         }
 
-        flash(__('flash.error.delete', ['entity' => 'статус']))->error();
         return redirect()->route('task_statuses.index');
     }
 }
