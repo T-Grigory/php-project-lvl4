@@ -73,7 +73,7 @@ class LabelTest extends TestCase
 
         $this->actingAs($this->user)
              ->delete(route('labels.destroy', $label))
-             ->assertRedirect(route('labels.index'))
+             ->assertRedirect(route('home.index'))
              ->assertSessionHasNoErrors();
 
         $this->assertDatabaseMissing('labels', ['id' => $label->only('id')]);

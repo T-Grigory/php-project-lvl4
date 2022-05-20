@@ -60,7 +60,7 @@ class TaskController extends Controller
         $this->authorize('create', TaskStatus::class);
 
         $data = $this->validate($request, [
-            'name' => 'required|unique:tasks',
+            'name' => 'required|max:255|unique:tasks',
             'description' => 'nullable',
             'status_id' => 'required',
             'assigned_to_id' => 'nullable',
@@ -103,7 +103,7 @@ class TaskController extends Controller
         $this->authorize('update', $task);
 
         $data = $this->validate($request, [
-            'name' => 'required|unique:tasks,name,' . $task->id,
+            'name' => 'required|max:255|unique:tasks,name,' . $task->id,
             'description' => 'nullable',
             'status_id' => 'required',
             'assigned_to_id' => 'nullable',
@@ -138,6 +138,6 @@ class TaskController extends Controller
 
         flash(__('flash.success.feminine.delete', ['entity' => 'задача']))->success();
 
-        return redirect()->route('tasks.index');
+        return redirect()->route('home.index');
     }
 }

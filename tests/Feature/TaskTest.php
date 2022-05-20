@@ -3,9 +3,8 @@
 namespace Tests\Feature;
 
 use App\Models\Task;
+use App\Models\TaskStatus;
 use App\Models\User;
-use Database\Seeders\TaskStatusSeeder;
-use Database\Seeders\UserSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,11 +18,8 @@ class TaskTest extends TestCase
     {
         parent::setUp();
 
-        $this->seed([
-            TaskStatusSeeder::class,
-            UserSeeder::class,
-        ]);
-
+        User::factory(10)->create();
+        TaskStatus::factory()->count(4)->create();
         $this->user = User::factory()->create();
     }
     public function testIndex()
@@ -95,7 +91,7 @@ class TaskTest extends TestCase
 
         $this->actingAs($this->user)
              ->delete(route('tasks.destroy', $task))
-             ->assertRedirect(route('tasks.index'))
+             ->assertRedirect(route('home.index'))
              ->assertSessionHasNoErrors();
 
         $this->assertDatabaseMissing('tasks', ['id' => $task->only('id')]);

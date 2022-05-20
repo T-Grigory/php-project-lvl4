@@ -9,8 +9,6 @@ use Illuminate\Http\RedirectResponse;
 
 class LabelController extends Controller
 {
-    private const EMPTY_LIST_OF_LABEL = 0;
-
     public function index(): View
     {
         $labels = Label::Orderby('id')->paginate(15);
@@ -32,7 +30,7 @@ class LabelController extends Controller
         $this->authorize('create', Label::class);
 
         $data = $this->validate($request, [
-            'name' => 'required|unique:labels',
+            'name' => 'required|max:255|unique:labels',
             'description' => 'nullable'
         ]);
 
@@ -57,8 +55,8 @@ class LabelController extends Controller
         $this->authorize('update', $label);
 
         $data = $this->validate($request, [
-            'name' => 'required|unique:labels,name,' . $label->id,
-            'description' => 'nullable'
+            'name' => 'required|max:255|unique:labels,name,' . $label->id,
+            'description' => 'nullable|max:255'
         ]);
 
         $label->fill($data);
@@ -79,13 +77,13 @@ class LabelController extends Controller
 
         $this->authorize('delete', $label);
 
-        if ($label->tasks->count() === self::EMPTY_LIST_OF_LABEL) {
+        if (!$label->tasks()->exists()) {
             $label->delete();
             flash(__('flash.success.feminine.delete', ['entity' => 'метка']))->success();
-        } else {
-            flash(__('flash.error.delete', ['entity' => 'метку']))->error();
+            return redirect()->route('home.index');
         }
 
+        flash(__('flash.error.delete', ['entity' => 'метку']))->error();
         return redirect()->route('labels.index');
     }
 }

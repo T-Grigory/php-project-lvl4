@@ -9,8 +9,6 @@ use Illuminate\Http\RedirectResponse;
 
 class TaskStatusController extends Controller
 {
-    private const EMPTY_LIST_OF_TASK = 0;
-
     public function index(): View
     {
         $taskStatuses = TaskStatus::orderBy('id')->paginate(15);
@@ -32,7 +30,7 @@ class TaskStatusController extends Controller
         $this->authorize('create', TaskStatus::class);
 
         $data = $this->validate($request, [
-           'name' => 'required|unique:task_statuses'
+           'name' => 'required|max:255|unique:task_statuses'
         ]);
 
         $taskStatus = new TaskStatus();
@@ -59,7 +57,7 @@ class TaskStatusController extends Controller
         $this->authorize('update', $taskStatus);
 
         $data = $this->validate($request, [
-           'name' => 'required|unique:task_statuses,name,' . $taskStatus->id,
+           'name' => 'required|max:255|unique:task_statuses,name,' . $taskStatus->id,
         ]);
 
         $taskStatus->fill($data);
@@ -79,13 +77,13 @@ class TaskStatusController extends Controller
         }
         $this->authorize('delete', $taskStatus);
 
-        if ($taskStatus->tasks->count() === self::EMPTY_LIST_OF_TASK) {
+        if (!$taskStatus->tasks()->exists()) {
             $taskStatus->delete();
             flash(__('flash.success.masculine.delete', ['entity' => 'статус']))->success();
-        } else {
-            flash(__('flash.error.delete', ['entity' => 'статус']))->error();
+            return redirect()->route('home.index');
         }
 
+        flash(__('flash.error.delete', ['entity' => 'статус']))->error();
         return redirect()->route('task_statuses.index');
     }
 }
