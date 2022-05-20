@@ -138,6 +138,6 @@ class TaskController extends Controller
 
         flash(__('flash.success.feminine.delete', ['entity' => 'задача']))->success();
 
-        return redirect()->route('home.index');
+        return redirect()->route('tasks.index');
     }
 }

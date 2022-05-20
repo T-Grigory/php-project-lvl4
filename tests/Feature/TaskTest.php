@@ -91,7 +91,7 @@ class TaskTest extends TestCase
 
         $this->actingAs($this->user)
              ->delete(route('tasks.destroy', $task))
-             ->assertRedirect(route('home.index'))
+             ->assertRedirect(route('tasks.index'))
              ->assertSessionHasNoErrors();
 
         $this->assertDatabaseMissing('tasks', ['id' => $task->only('id')]);

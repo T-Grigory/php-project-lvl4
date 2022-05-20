@@ -80,10 +80,10 @@ class LabelController extends Controller
         if (!$label->tasks()->exists()) {
             $label->delete();
             flash(__('flash.success.feminine.delete', ['entity' => 'метка']))->success();
-            return redirect()->route('home.index');
+        } else {
+            flash(__('flash.error.delete', ['entity' => 'метку']))->error();
         }
 
-        flash(__('flash.error.delete', ['entity' => 'метку']))->error();
         return redirect()->route('labels.index');
     }
 }
