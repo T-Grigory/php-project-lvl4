@@ -2,9 +2,9 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\Models\TaskStatus
@@ -23,7 +23,6 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|TaskStatus whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TaskStatus whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|TaskStatus whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 class TaskStatus extends Model
 {
@@ -31,7 +30,7 @@ class TaskStatus extends Model
 
     protected $fillable = ['name'];
 
-    public function tasks()
+    public function tasks(): HasMany
     {
         return $this->hasMany(Task::class, 'status_id');
     }

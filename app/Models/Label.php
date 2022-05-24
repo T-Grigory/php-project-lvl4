@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -26,7 +25,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
  * @method static \Illuminate\Database\Eloquent\Builder|Label whereId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Label whereName($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Label whereUpdatedAt($value)
- * @mixin \Eloquent
  */
 class Label extends Model
 {
