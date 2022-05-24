@@ -9,17 +9,18 @@ use Illuminate\Http\RedirectResponse;
 
 class LabelController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Label::class);
+    }
     public function index(): View
     {
-        $labels = Label::Orderby('id')->paginate(15);
-
+        $labels = Label::OrderBy('id')->paginate();
         return view('label.index', compact('labels'));
     }
 
     public function create(): View
     {
-        $this->authorize('create', Label::class);
-
         $label = new Label();
 
         return view('label.create', compact('label'));
@@ -27,8 +28,6 @@ class LabelController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->authorize('create', Label::class);
-
         $data = $this->validate($request, [
             'name' => 'required|max:255|unique:labels',
             'description' => 'nullable'
@@ -38,22 +37,18 @@ class LabelController extends Controller
         $label->fill($data);
         $label->save();
 
-        flash(__('flash.success.feminine.create', ['entity' => 'метка']))->success();
+        flash(__('flash.label.store.success'))->success();
 
         return redirect()->route('labels.index');
     }
 
     public function edit(Label $label): View
     {
-        $this->authorize('update', $label);
-
         return view('label.edit', compact('label'));
     }
 
     public function update(Request $request, Label $label): RedirectResponse
     {
-        $this->authorize('update', $label);
-
         $data = $this->validate($request, [
             'name' => 'required|max:255|unique:labels,name,' . $label->id,
             'description' => 'nullable|max:255'
@@ -62,26 +57,18 @@ class LabelController extends Controller
         $label->fill($data);
         $label->save();
 
-        flash(__('flash.success.feminine.change', ['entity' => 'метка']))->success();
+        flash(__('flash.label.update.success'))->success();
 
         return redirect()->route('labels.index');
     }
 
-    public function destroy(int $id): RedirectResponse
+    public function destroy(Label $label): RedirectResponse
     {
-        $label = Label::find($id);
-
-        if (is_null($label)) {
-            return redirect()->route('labels.index');
-        }
-
-        $this->authorize('delete', $label);
-
         if (!$label->tasks()->exists()) {
             $label->delete();
-            flash(__('flash.success.feminine.delete', ['entity' => 'метка']))->success();
+            flash(__('flash.label.destroy.success'))->success();
         } else {
-            flash(__('flash.error.delete', ['entity' => 'метку']))->error();
+            flash(__('flash.label.destroy.error'))->error();
         }
 
         return redirect()->route('labels.index');

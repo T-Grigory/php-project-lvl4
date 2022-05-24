@@ -9,17 +9,19 @@ use Illuminate\Http\RedirectResponse;
 
 class TaskStatusController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(TaskStatus::class);
+    }
     public function index(): View
     {
-        $taskStatuses = TaskStatus::orderBy('id')->paginate(15);
+        $taskStatuses = TaskStatus::orderBy('id')->paginate();
 
         return view('task_status.index', compact('taskStatuses'));
     }
 
     public function create(): View
     {
-        $this->authorize('create', TaskStatus::class);
-
         $taskStatus = new TaskStatus();
 
         return view('task_status.create', compact('taskStatus'));
@@ -27,8 +29,6 @@ class TaskStatusController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->authorize('create', TaskStatus::class);
-
         $data = $this->validate($request, [
            'name' => 'required|max:255|unique:task_statuses'
         ]);
@@ -38,24 +38,19 @@ class TaskStatusController extends Controller
         $taskStatus->fill($data);
         $taskStatus->save();
 
-        flash(__('flash.success.masculine.create', ['entity' => 'статус']))->success();
+        flash(__('flash.task_status.store.success'))->success();
 
         return redirect()->route('task_statuses.index');
     }
 
     public function edit(TaskStatus $taskStatus): View
     {
-        $this->authorize('update', $taskStatus);
-
         return view('task_status.edit', compact('taskStatus'));
     }
 
 
     public function update(Request $request, TaskStatus $taskStatus): RedirectResponse
     {
-
-        $this->authorize('update', $taskStatus);
-
         $data = $this->validate($request, [
            'name' => 'required|max:255|unique:task_statuses,name,' . $taskStatus->id,
         ]);
@@ -63,25 +58,18 @@ class TaskStatusController extends Controller
         $taskStatus->fill($data);
         $taskStatus->save();
 
-        flash(__('flash.success.masculine.change', ['entity' => 'статус']))->success();
+        flash(__('flash.task_status.update.success'))->success();
 
         return redirect()->route('task_statuses.index');
     }
 
-    public function destroy(int $id): RedirectResponse
+    public function destroy(TaskStatus $taskStatus): RedirectResponse
     {
-        $taskStatus = TaskStatus::find($id);
-
-        if (is_null($taskStatus)) {
-            return redirect()->route('task_statuses.index');
-        }
-        $this->authorize('delete', $taskStatus);
-
         if (!$taskStatus->tasks()->exists()) {
             $taskStatus->delete();
-            flash(__('flash.success.masculine.delete', ['entity' => 'статус']))->success();
+            flash(__('flash.task_status.destroy.success'))->success();
         } else {
-            flash(__('flash.error.delete', ['entity' => 'статус']))->error();
+            flash(__('flash.task_status.destroy.error'))->error();
         }
 
         return redirect()->route('task_statuses.index');

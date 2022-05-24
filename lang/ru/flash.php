@@ -1,22 +1,40 @@
 <?php
 
 return [
-    'success' => [
-        'feminine' => [
-            'create' => ':Entity успешно создана',
-            'change' => ':Entity успешно изменена',
-            'delete' => ':Entity успешно удалена',
+    'label' => [
+        'store' => [
+            'success' => 'Метка успешно создана'
         ],
-        'masculine' => [
-            'create' => ':Entity успешно создан',
-            'change' => ':Entity успешно изменён',
-            'delete' => ':Entity успешно удалён',
+        'update' => [
+            'success' => 'Метка успешно изменена'
         ],
-
+        'destroy' => [
+            'success' => 'Метка успешно удалена',
+            'error' => 'Не удалось удалить метку'
+        ],
     ],
-    'error' => [
-        'create' => 'Не удалось создать :entity',
-        'change' => 'Не удалось изменить :entity',
-        'delete' => 'Не удалось удалить :entity'
+    'task_status' => [
+        'store' => [
+            'success' => 'Статус успешно создан'
+        ],
+        'update' => [
+            'success' => 'Статус успешно изменен'
+        ],
+        'destroy' => [
+            'success' => 'Статус успешно удален',
+            'error' => 'Не удалось удалить статус'
+        ],
     ],
+    'task' => [
+        'store' => [
+            'success' => 'Задача успешно создана'
+        ],
+        'update' => [
+            'success' => 'Задача успешно изменена'
+        ],
+        'destroy' => [
+            'success' => 'Задача успешно удалена',
+            'error' => 'Не удалось удалить задачу'
+        ],
+    ]
 ];

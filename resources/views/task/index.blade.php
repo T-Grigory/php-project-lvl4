@@ -10,7 +10,7 @@
                         <select class="form-select me-2" name="filter[status_id]">
                             <option value="">Статус</option>
                             @foreach($statuses as $status)
-                                <option @selected($status->id == $statusID) value="{{$status->id}}">{{$status->name}}</option>
+                                <option @selected($status->id == ($query['status_id'] ?? null)) value="{{$status->id}}">{{$status->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -18,7 +18,7 @@
                         <select class="form-select me-2" name="filter[created_by_id]">
                             <option selected="selected" value="">Автор</option>
                             @foreach($users as $author)
-                                <option @selected($createdByID == $author->id) value="{{$author->id}}">{{$author->name}}</option>
+                                <option @selected($author->id == ($query['created_by_id'] ?? null)) value="{{$author->id}}">{{$author->name}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -26,7 +26,7 @@
                         <select class="form-select me-2" name="filter[assigned_to_id]">
                             <option selected="selected" value="">Исполнитель</option>
                             @foreach($users as $performer)
-                                <option @selected($assignedToID == $performer->id) value="{{$performer->id}}">{{$performer->name}}</option>
+                                <option @selected($performer->id == ($query['assigned_to_id'] ?? null)) value="{{$performer->id}}">{{$performer->name}}</option>
                             @endforeach
                         </select>
                     </div>

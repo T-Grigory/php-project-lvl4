@@ -5,13 +5,10 @@ namespace Tests\Feature;
 use App\Models\Task;
 use App\Models\TaskStatus;
 use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class TaskTest extends TestCase
+class TaskControllerTest extends TestCase
 {
-    use RefreshDatabase;
-
     private User $user;
 
     protected function setUp(): void
@@ -19,7 +16,8 @@ class TaskTest extends TestCase
         parent::setUp();
 
         User::factory(10)->create();
-        TaskStatus::factory()->count(4)->create();
+        TaskStatus::factory(4)->create();
+
         $this->user = User::factory()->create();
     }
     public function testIndex()

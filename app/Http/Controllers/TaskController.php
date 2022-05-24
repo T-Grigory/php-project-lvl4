@@ -16,9 +16,13 @@ use Spatie\QueryBuilder\QueryBuilder;
 
 class TaskController extends Controller
 {
+    public function __construct()
+    {
+        $this->authorizeResource(Task::class);
+    }
+
     public function index(): View
     {
-
         $tasks = QueryBuilder::for(Task::class)
             ->allowedFilters([
                 AllowedFilter::exact('status_id'),
@@ -26,27 +30,17 @@ class TaskController extends Controller
                 AllowedFilter::exact('assigned_to_id')
             ])
             ->orderBy('id')
-            ->paginate(15);
-
+            ->paginate();
 
         $users = User::all();
         $statuses = TaskStatus::all();
+        $query = request()->input('filter') ?? [];
 
-        $query = request()->query->all();
-
-        $filter = [
-            'statusID' => $query['filter']['status_id'] ?? null,
-            'createdByID' => $query['filter']['created_by_id'] ??  null,
-            'assignedToID' => $query['filter']['assigned_to_id'] ??  null,
-        ];
-
-        return view('task.index', compact('tasks', 'users', 'statuses'), $filter);
+        return view('task.index', compact('tasks', 'users', 'statuses', 'query'));
     }
 
     public function create(): View
     {
-        $this->authorize('create', TaskStatus::class);
-
         $task = new Task();
         $users = User::all();
         $statuses = TaskStatus::all();
@@ -57,8 +51,6 @@ class TaskController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $this->authorize('create', TaskStatus::class);
-
         $data = $this->validate($request, [
             'name' => 'required|max:255|unique:tasks',
             'description' => 'nullable',
@@ -74,22 +66,18 @@ class TaskController extends Controller
 
         $task->labels()->attach($labels);
 
-        flash(__('flash.success.feminine.create', ['entity' => 'задача']))->success();
+        flash(__('flash.task.store.success'))->success();
 
         return redirect()->route('tasks.index');
     }
 
     public function show(Task $task): View
     {
-        $this->authorize('view', $task);
-
         return view('task.show', compact('task'));
     }
 
     public function edit(Task $task): View
     {
-        $this->authorize('update', $task);
-
         $users = User::all();
         $statuses = TaskStatus::all();
         $labels = Label::all();
@@ -99,9 +87,6 @@ class TaskController extends Controller
 
     public function update(Request $request, Task $task): RedirectResponse
     {
-
-        $this->authorize('update', $task);
-
         $data = $this->validate($request, [
             'name' => 'required|max:255|unique:tasks,name,' . $task->id,
             'description' => 'nullable',
@@ -117,26 +102,18 @@ class TaskController extends Controller
 
         $task->labels()->sync($labels);
 
-        flash(__('flash.success.feminine.change', ['entity' => 'задача']))->success();
+        flash(__('flash.task.update.success'))->success();
 
         return redirect()->route('tasks.index');
     }
 
-    public function destroy(int $id): RedirectResponse
+    public function destroy(Task $task): RedirectResponse
     {
-        $task = Task::find($id);
-
-        if (is_null($task)) {
-            return redirect()->route('tasks.index');
-        }
-
-        $this->authorize('delete', $task);
-
         $task->labels()->detach();
 
         $task->delete();
 
-        flash(__('flash.success.feminine.delete', ['entity' => 'задача']))->success();
+        flash(__('flash.task.destroy.success'))->success();
 
         return redirect()->route('tasks.index');
     }
